@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlAttributeOrdering", "XamlAttributeOrdering\XamlAttributeOrdering\XamlAttributeOrdering.csproj", "{FBD179CA-6647-47D7-980D-342AEA5629B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlAttributeOrdering.Tests", "XamlAttributeOrdering\XamlAttributeOrdering.Tests\XamlAttributeOrdering.Tests.csproj", "{E4983A55-5305-4D3E-924E-BDA9CC6692CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBD179CA-6647-47D7-980D-342AEA5629B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBD179CA-6647-47D7-980D-342AEA5629B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBD179CA-6647-47D7-980D-342AEA5629B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBD179CA-6647-47D7-980D-342AEA5629B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4983A55-5305-4D3E-924E-BDA9CC6692CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4983A55-5305-4D3E-924E-BDA9CC6692CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4983A55-5305-4D3E-924E-BDA9CC6692CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4983A55-5305-4D3E-924E-BDA9CC6692CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
