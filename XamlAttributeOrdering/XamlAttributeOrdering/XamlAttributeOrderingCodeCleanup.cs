@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using JetBrains.Application;
 using JetBrains.Application.Progress;
@@ -7,14 +9,13 @@ using JetBrains.DocumentModel;
 using JetBrains.ReSharper.Feature.Services.CodeCleanup;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Files;
-using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Psi.Xaml;
 using JetBrains.ReSharper.Psi.Xaml.Tree;
-using JetBrains.ReSharper.Psi.Xml.Impl.Tree;
 using JetBrains.ReSharper.Psi.Xml.Tree;
 
 namespace XamlAttributeOrdering
 {
+    //(ModulesAfter = new[] { typeof(IXmlContextActionProvider).Assembly.GetType("JetBrains.ReSharper.Feature.Services.Xml.CodeCleanup.XmlReformatCleanupModule") })
     [CodeCleanupModule]
     public class XamlAttributeOrderingCodeCleanup : ICodeCleanupModule
     {
@@ -56,35 +57,72 @@ namespace XamlAttributeOrdering
                 LanguageService languageService = xamlFile.Language.LanguageService();
                 if (languageService == null)
                     break;
-                var xamlElementTypes = XmlElementTypes.GetInstance<XamlElementTypes>(XamlLanguage.Instance);
-                var xmlCompositeNodeType = xamlElementTypes.TAG_HEADER;
                 sourceFile.GetPsiServices().Transactions.Execute("Code cleanup", () =>
                 {
-                    using (WriteLockCookie.Create())
+                    var attributeGroups = new[]
                     {
-                        xamlFile.ProcessDescendants(new RecursiveElementProcessor(t =>
+                        new[] {"Key", "x:Key"},
+                        new[] {"Name", "x:Name", "Title"},
+                        new[] { "Grid.Row", "Grid.RowSpan", "Grid.Column", "Grid.ColumnSpan", "Canvas.Left", "Canvas.Top", "Canvas.Right", "Canvas.Bottom" },
+                        new[] { "Width", "Height", "MinWidth", "MinHeight", "MaxWidth", "MaxHeight", "Margin" },
+                        new[] { "HorizontalAlignment", "VerticalAlignment", "HorizontalContentAlignment", "VerticalContentAlignment", "Panel.ZIndex" },
+                        new[] { "PageSource", "PageIndex", "Offset", "Color", "TargetName", "Property", "Value", "StartPoint", "EndPoint" }
+                    };
+                    xamlFile.ProcessDescendants(new RecursiveElementProcessor<IXmlTag>(t =>
+                    {
+                        var attributes = t.Header.Attributes.ToList();
+
+                        using (WriteLockCookie.Create())
                         {
-                            if (t.NodeType == xmlCompositeNodeType)
+                            foreach (var attribute in attributes)
                             {
-                                var container = (XmlTagHeaderNode)t;
-                                
-                                var attributes = container.Children<IXmlAttribute>().ToArray();
+                                if (attribute is INamespaceAlias)
+                                    continue;
+                                t.RemoveAttribute(attribute);
+                                Debug.WriteLine(attribute.GetType());
+                            }
 
-                                foreach (var xmlAttribute in attributes)
-                                {
-                                    xmlAttribute.Remove();
-                                }
+                            foreach (var attribute in attributes.OfType<IXClassAttribute>().ToArray())
+                            {
+                                t.AddAttributeBefore(attribute, null);
+                                attributes.Remove(attribute);
+                            }
 
-                                //HOW do i make this work..
-                                foreach (var xmlAttribute in attributes.OrderBy(a=>a.AttributeName))
+                            // Leave namespaces as they are for the moment as there is something odd going on.
+                            //foreach (var attribute in sorted.OfType<INamespaceAlias>())
+                            //{
+                            //    attribute.SetResolveContextForSandBox(t, SandBoxContextType.Child);
+                            //    anchor = t.AddAttributeAfter(attribute, anchor);
+                            //}
+
+                            foreach (var attributeGroup in attributeGroups)
+                            {
+                                foreach (var attribute in SortedByPriority(attributes, attributeGroup).ToArray())
                                 {
-                                    container.AddAttributeBefore(xmlAttribute, null);
+                                    t.AddAttributeBefore(attribute, null);
+                                    attributes.Remove(attribute);
                                 }
                             }
-                        }));
-                    }
+
+                            //REST
+                            foreach (var attribute in attributes)
+                                t.AddAttributeBefore(attribute, null);
+                        }
+                    }));
                 });
             }
+        }
+
+        private IEnumerable<IXmlAttribute> SortedByPriority(IEnumerable<IXmlAttribute> attributes, string[] attributeNames)
+        {
+            return attributes.SelectMany(a =>
+            {
+                var index = Array.IndexOf(attributeNames, a.AttributeName);
+                if (index < 0) return Enumerable.Empty<Tuple<IXmlAttribute, int>>();
+                return new []{Tuple.Create(a, index)};
+            })
+            .OrderBy(a=>a.Item2)
+            .Select(a=>a.Item1);
         }
 
         [DefaultValue(true)]
