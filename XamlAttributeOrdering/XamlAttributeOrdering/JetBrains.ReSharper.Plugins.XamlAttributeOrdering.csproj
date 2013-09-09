@@ -8,8 +8,8 @@
     <ProjectGuid>{FBD179CA-6647-47D7-980D-342AEA5629B2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XamlAttributeOrdering</RootNamespace>
-    <AssemblyName>XamlAttributeOrdering</AssemblyName>
+    <RootNamespace>JetBrains.ReSharper.Plugins.XamlAttributeOrdering</RootNamespace>
+    <AssemblyName>JetBrains.ReSharper.Plugins.XamlAttributeOrdering</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -33,9 +33,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -47,12 +49,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AboutAction.cs" />
     <Compile Include="XamlAttributeOrderingCodeCleanup.cs" />
+    <Compile Include="XamlAttributeOrderingOptionsPage.cs" />
+    <Compile Include="XamlAttributeOrderingSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Actions.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="XamlAttributeOrdering.nuspec" />
   </ItemGroup>
   <PropertyGroup>
     <ReSharperSdkTargets Condition=" '$(ReSharperSdkTargets)' == '' ">$(MSBuildExtensionsPath)\JetBrains\ReSharper.SDK\v8.0</ReSharperSdkTargets>

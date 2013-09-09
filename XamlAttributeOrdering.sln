@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlAttributeOrdering", "XamlAttributeOrdering\XamlAttributeOrdering\XamlAttributeOrdering.csproj", "{FBD179CA-6647-47D7-980D-342AEA5629B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JetBrains.ReSharper.Plugins.XamlAttributeOrdering", "XamlAttributeOrdering\XamlAttributeOrdering\JetBrains.ReSharper.Plugins.XamlAttributeOrdering.csproj", "{FBD179CA-6647-47D7-980D-342AEA5629B2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlAttributeOrdering.Tests", "XamlAttributeOrdering\XamlAttributeOrdering.Tests\XamlAttributeOrdering.Tests.csproj", "{E4983A55-5305-4D3E-924E-BDA9CC6692CE}"
 EndProject
