@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E4983A55-5305-4D3E-924E-BDA9CC6692CE}</ProjectGuid>
+    <ProjectGuid>{FBD179CA-6647-47D7-980D-342AEA5629B2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XamlAttributeOrdering.Tests</RootNamespace>
-    <AssemblyName>XamlAttributeOrdering.Tests</AssemblyName>
+    <RootNamespace>XamlAttributeOrdering</RootNamespace>
+    <AssemblyName>JetBrains.ReSharper.Plugins.XamlAttributeOrdering.8.0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -46,24 +46,24 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeCleanupTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\XamlAttributeOrdering\JetBrains.ReSharper.Plugins.XamlAttributeOrdering.csproj">
-      <Project>{fbd179ca-6647-47d7-980d-342aea5629b2}</Project>
-      <Name>JetBrains.ReSharper.Plugins.XamlAttributeOrdering</Name>
-    </ProjectReference>
+    <Compile Include="AboutAction.cs" />
+    <Compile Include="XamlAttributeOrderingCodeCleanup.cs" />
+    <Compile Include="XamlAttributeOrderingOptionsPage.cs" />
+    <Compile Include="XamlAttributeOrderingSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="test\data\" />
+    <EmbeddedResource Include="Actions.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="XamlAttributeOrdering.nuspec" />
   </ItemGroup>
   <PropertyGroup>
     <ReSharperSdkTargets Condition=" '$(ReSharperSdkTargets)' == '' ">$(MSBuildExtensionsPath)\JetBrains\ReSharper.SDK\v8.0</ReSharperSdkTargets>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(ReSharperSdkTargets)\Plugin.Tests.Targets" />
+  <Import Project="$(ReSharperSdkTargets)\Plugin.Targets" />
 </Project>
