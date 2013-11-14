@@ -12,13 +12,13 @@ namespace XamlAttributeOrdering.Tests
         }
 
         [Test]
-        public void TestFullCleanup()
+        public void TestFullCleanup2()
         {
             DoTestFiles("UserControl1.xaml");
         }
 
         [Test]
-        public void TestWithoutCleanup()
+        public void TestWithoutCleanup2()
         {
             DoTestFilesWithProfile("disableCleanup.profile", "UserControl1.xaml");
         }
