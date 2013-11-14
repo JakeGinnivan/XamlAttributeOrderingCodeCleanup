@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JetBrains.ReSharper.Plugins.XamlAttributeOrdering.8.0", "XamlAttributeOrdering\XamlAttributeOrdering\JetBrains.ReSharper.Plugins.XamlAttributeOrdering.8.0.csproj", "{FBD179CA-6647-47D7-980D-342AEA5629B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlAttributeOrdering.8.0", "XamlAttributeOrdering\XamlAttributeOrdering\XamlAttributeOrdering.8.0.csproj", "{FBD179CA-6647-47D7-980D-342AEA5629B2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlAttributeOrdering.8.0.Tests", "XamlAttributeOrdering\XamlAttributeOrdering.Tests\XamlAttributeOrdering.8.0.Tests.csproj", "{E4983A55-5305-4D3E-924E-BDA9CC6692CE}"
 EndProject
@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReSharper 8.0", "ReSharper 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReSharper 8.1", "ReSharper 8.1", "{34B5526F-FF66-4F70-9FE1-E2AD220F7C71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JetBrains.ReSharper.Plugins.XamlAttributeOrdering.8.1", "XamlAttributeOrdering\XamlAttributeOrdering\JetBrains.ReSharper.Plugins.XamlAttributeOrdering.8.1.csproj", "{7A15BCD9-A55E-4899-8BB3-D90E4186FDB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlAttributeOrdering.8.1", "XamlAttributeOrdering\XamlAttributeOrdering\XamlAttributeOrdering.8.1.csproj", "{7A15BCD9-A55E-4899-8BB3-D90E4186FDB2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlAttributeOrdering.8.1.Tests", "XamlAttributeOrdering\XamlAttributeOrdering.Tests\XamlAttributeOrdering.8.1.Tests.csproj", "{6A81B18C-42EF-4938-8BA2-F8A3A4E2DA4F}"
 EndProject

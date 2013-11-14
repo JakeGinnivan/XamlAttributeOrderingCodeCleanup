@@ -59,9 +59,9 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\XamlAttributeOrdering\JetBrains.ReSharper.Plugins.XamlAttributeOrdering.8.1.csproj">
+    <ProjectReference Include="..\XamlAttributeOrdering\XamlAttributeOrdering.8.1.csproj">
       <Project>{7a15bcd9-a55e-4899-8bb3-d90e4186fdb2}</Project>
-      <Name>JetBrains.ReSharper.Plugins.XamlAttributeOrdering.8.1</Name>
+      <Name>XamlAttributeOrdering.8.1</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

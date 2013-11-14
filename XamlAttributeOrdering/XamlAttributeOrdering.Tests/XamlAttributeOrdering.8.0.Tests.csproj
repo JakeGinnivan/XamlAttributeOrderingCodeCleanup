@@ -50,9 +50,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\XamlAttributeOrdering\JetBrains.ReSharper.Plugins.XamlAttributeOrdering.8.0.csproj">
+    <ProjectReference Include="..\XamlAttributeOrdering\XamlAttributeOrdering.8.0.csproj">
       <Project>{fbd179ca-6647-47d7-980d-342aea5629b2}</Project>
-      <Name>JetBrains.ReSharper.Plugins.XamlAttributeOrdering.8.0</Name>
+      <Name>XamlAttributeOrdering.8.0</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
