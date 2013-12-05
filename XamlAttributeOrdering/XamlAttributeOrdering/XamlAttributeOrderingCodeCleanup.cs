@@ -83,20 +83,20 @@ namespace XamlAttributeOrdering
                     };
                     xamlFile.ProcessDescendants(new RecursiveElementProcessor<IXmlTag>(t =>
                     {
-                        if (t.GetTagName() == "Window") return;
                         List<IXmlAttribute> attributes = t.Header.Attributes.ToList();
 
                         using (WriteLockCookie.Create())
                         {
                             foreach (IXmlAttribute attribute in attributes)
                             {
-                                if (attribute is INamespaceAlias || attribute is IXClassAttribute)
+                                if (attribute is INamespaceAlias)
                                     continue;
                                 t.RemoveAttribute(attribute);
                             }
 
                             foreach (IXClassAttribute attribute in attributes.OfType<IXClassAttribute>().ToArray())
                             {
+                                t.AddAttributeBefore(attribute, null);
                                 attributes.Remove(attribute);
                             }
 

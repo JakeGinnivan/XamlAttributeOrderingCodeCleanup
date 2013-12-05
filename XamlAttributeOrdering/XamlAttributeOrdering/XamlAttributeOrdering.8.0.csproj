@@ -57,9 +57,6 @@
     <Content Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Actions.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="XamlAttributeOrdering.nuspec" />
   </ItemGroup>
   <PropertyGroup>
