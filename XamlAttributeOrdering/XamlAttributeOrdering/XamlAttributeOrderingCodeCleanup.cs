@@ -10,7 +10,6 @@ using JetBrains.DocumentModel;
 using JetBrains.ReSharper.Feature.Services.CodeCleanup;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Files;
-using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Psi.Xaml;
 using JetBrains.ReSharper.Psi.Xaml.Tree;
 using JetBrains.ReSharper.Psi.Xml.Tree;
@@ -84,27 +83,28 @@ namespace XamlAttributeOrdering
                     };
                     xamlFile.ProcessDescendants(new RecursiveElementProcessor<IXmlTag>(t =>
                     {
-                        if (t.Root() == t) return;
+                        if (t.GetTagName() == "Window") return;
                         List<IXmlAttribute> attributes = t.Header.Attributes.ToList();
 
                         using (WriteLockCookie.Create())
                         {
                             foreach (IXmlAttribute attribute in attributes)
                             {
-                                if (attribute is INamespaceAlias)
+                                if (attribute is INamespaceAlias || attribute is IXClassAttribute)
                                     continue;
                                 t.RemoveAttribute(attribute);
                             }
 
                             foreach (IXClassAttribute attribute in attributes.OfType<IXClassAttribute>().ToArray())
                             {
-                                t.AddAttributeBefore(attribute, null);
                                 attributes.Remove(attribute);
                             }
 
                             // Dont want to double up
                             foreach (INamespaceAlias attribute in attributes.OfType<INamespaceAlias>().ToArray())
+                            {
                                 attributes.Remove(attribute);
+                            }
 
                             foreach (var attributeGroup in attributeGroups)
                             {
