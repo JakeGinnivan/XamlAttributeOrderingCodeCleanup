@@ -11,6 +11,10 @@ namespace XamlAttributeOrdering.Tests
             get { return ""; }
         }
 
+        // note: extra first line in .gold file is produced
+        // by the 'CodeCleanupTestBase' infrastructure (for dumping something).
+        // just ignore it, since in VS environment there is no extra line.
+
         [Test]
         public void TestFullCleanup2()
         {

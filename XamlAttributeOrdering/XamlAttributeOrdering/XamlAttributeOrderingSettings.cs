@@ -17,12 +17,12 @@ namespace XamlAttributeOrdering
         public string Group2_NameGroup { get; set; }
 
         [SettingsEntry(
-            "Grid.Row, Grid.RowSpan, Grid.Column, Grid.ColumnSpan, Canvas.Left, Canvas.Top, Canvas.Right, Canvas.Bottom", 
+            "Grid.Column, Grid.ColumnSpan, Grid.Row, Grid.RowSpan, Canvas.Left, Canvas.Top, Canvas.Right, Canvas.Bottom",
             "Group #3 - Attached Layout Properties")]
         public string Group3_AttachedLayoutGroup { get; set; }
 
         [SettingsEntry(
-            "Width, Height, MinWidth, MinHeight, MaxWidth, MaxHeight, Margin",
+            "Width, Height, MinWidth, MinHeight, MaxWidth, MaxHeight, Margin, Padding",
             "Group #4 - Layout Properties")]
         public string Group4_LayoutGroup { get; set; }
 
