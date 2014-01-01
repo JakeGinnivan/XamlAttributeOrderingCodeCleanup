@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using JetBrains.Application;
-using JetBrains.Application.DataContext;
 using JetBrains.Application.Progress;
 using JetBrains.Application.Settings;
 using JetBrains.DocumentModel;
 using JetBrains.ReSharper.Feature.Services.CodeCleanup;
 using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.ExtensionsAPI;
 using JetBrains.ReSharper.Psi.Files;
+using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Psi.Xaml;
+using JetBrains.ReSharper.Psi.Xaml.Impl;
 using JetBrains.ReSharper.Psi.Xaml.Tree;
 using JetBrains.ReSharper.Psi.Xml.Tree;
 
@@ -20,15 +22,7 @@ namespace XamlAttributeOrdering
     [CodeCleanupModule]
     public class XamlAttributeOrderingCodeCleanup : ICodeCleanupModule
     {
-        private readonly ISettingsStore _settingsStore;
-        private readonly DataContexts _dataContexts;
         private static readonly Descriptor DescriptorInstance = new Descriptor();
-
-        public XamlAttributeOrderingCodeCleanup(ISettingsStore settingsStore, DataContexts dataContexts)
-        {
-            _settingsStore = settingsStore;
-            _dataContexts = dataContexts;
-        }
 
         public PsiLanguageType LanguageType
         {
@@ -37,7 +31,7 @@ namespace XamlAttributeOrdering
 
         public ICollection<CodeCleanupOptionDescriptor> Descriptors
         {
-            get { return new CodeCleanupOptionDescriptor[] {DescriptorInstance}; }
+            get { return new CodeCleanupOptionDescriptor[] { DescriptorInstance }; }
         }
 
         public bool IsAvailableOnSelection
@@ -51,109 +45,158 @@ namespace XamlAttributeOrdering
 
         public bool IsAvailable(IPsiSourceFile sourceFile)
         {
-            var settings = GetXamlAttributeOrderingSettings();
-            return settings.Enable && sourceFile.GetPsiFiles<XamlLanguage>().Any();
+            var settingsStore = sourceFile.GetSettingsStore();
+            return settingsStore.GetValue((XamlAttributeOrderingSettings x) => x.Enable)
+                && sourceFile.GetPsiFiles<XamlLanguage>().Any();
         }
 
-        public void Process(IPsiSourceFile sourceFile, IRangeMarker rangeMarker, CodeCleanupProfile profile,
-            IProgressIndicator progressIndicator)
+        public void Process(
+            IPsiSourceFile sourceFile, IRangeMarker rangeMarker,
+            CodeCleanupProfile profile, IProgressIndicator progressIndicator)
         {
-            var settings = GetXamlAttributeOrderingSettings();
-            var enabled = settings.Enable;
-            if (!profile.GetSetting(DescriptorInstance) ||!enabled)
+            var settingsStore = sourceFile.GetSettingsStore();
+            var settings = settingsStore.GetKey<XamlAttributeOrderingSettings>(SettingsOptimization.OptimizeDefault);
+            if (!profile.GetSetting(DescriptorInstance) || !settings.Enable)
                 return;
 
-            IXamlFile[] xamlFileArray = sourceFile.GetPsiFiles<XamlLanguage>().Cast<IXamlFile>().ToArray();
-            foreach (IXamlFile xamlFile in xamlFileArray)
+            foreach (var xamlFile in sourceFile.GetPsiFiles<XamlLanguage>().OfType<IXamlFile>())
             {
-                LanguageService languageService = xamlFile.Language.LanguageService();
-                if (languageService == null)
-                    break;
-
                 sourceFile.GetPsiServices().Transactions.Execute("Code cleanup", () =>
                 {
-                    var attributeGroups = new[]
-                    {
-                        settings.Group1_KeyGroup,
-                        settings.Group2_NameGroup,
-                        settings.Group3_AttachedLayoutGroup,
-                        settings.Group4_LayoutGroup,
-                        settings.Group5_AlignmentGroup,
-                        settings.Group6_MiscGroup
-                    };
-                    xamlFile.ProcessDescendants(new RecursiveElementProcessor<IXmlTag>(t =>
-                    {
-                        List<IXmlAttribute> attributes = t.Header.Attributes.ToList();
-
-                        using (WriteLockCookie.Create())
-                        {
-                            foreach (IXmlAttribute attribute in attributes)
-                            {
-                                if (attribute is INamespaceAlias)
-                                    continue;
-                                t.RemoveAttribute(attribute);
-                            }
-
-                            foreach (IXClassAttribute attribute in attributes.OfType<IXClassAttribute>().ToArray())
-                            {
-                                t.AddAttributeBefore(attribute, null);
-                                attributes.Remove(attribute);
-                            }
-
-                            // Dont want to double up
-                            foreach (INamespaceAlias attribute in attributes.OfType<INamespaceAlias>().ToArray())
-                            {
-                                attributes.Remove(attribute);
-                            }
-
-                            foreach (var attributeGroup in attributeGroups)
-                            {
-                                var attributeNames = attributeGroup.Split(',').Select(a => a.Trim()).ToArray();
-                                foreach (var attribute in SortedByPriority(attributes, attributeNames).ToArray())
-                                {
-                                    t.AddAttributeBefore(attribute, null);
-                                    attributes.Remove(attribute);
-                                }
-                            }
-
-                            //REST
-                            foreach (IXmlAttribute attribute in attributes)
-                                t.AddAttributeBefore(attribute, null);
-                        }
-                    }));
+                    var comparer = new AttributesComparer(settings);
+                    xamlFile.ProcessDescendants(new ReorderAttributesProcessor(comparer));
                 });
             }
         }
 
-        private XamlAttributeOrderingSettings GetXamlAttributeOrderingSettings()
+        // todo: extract to outer scope?
+        private class ReorderAttributesProcessor : IRecursiveElementProcessor
         {
-            var boundSettings = _settingsStore.BindToContextTransient(ContextRange.Smart((lt, _) => _dataContexts.Empty));
-            var settings = boundSettings.GetKey<XamlAttributeOrderingSettings>(SettingsOptimization.DoMeSlowly);
-            return settings;
+            private readonly IComparer<IXmlAttribute> _orderComparer;
+
+            public ReorderAttributesProcessor(IComparer<IXmlAttribute> orderComparer)
+            {
+                _orderComparer = orderComparer;
+            }
+
+            public bool InteriorShouldBeProcessed(ITreeNode element)
+            {
+                return !(element is IXmlTagHeader)
+                    && !(element is IXmlTagFooter);
+            }
+
+            public void ProcessBeforeInterior(ITreeNode element)
+            {
+                var header = element as IXmlTagHeader;
+                if (header == null)
+                    return;
+
+                // note: using LINQ's .OrderBy() because of stable sorting behavior
+                var sortedAttributes = header.Attributes.OrderBy(x => x, _orderComparer).ToList();
+                if (sortedAttributes.SequenceEqual(header.AttributesEnumerable))
+                    return;
+
+                using (WriteLockCookie.Create())
+                {
+                    var xamlFactory = XamlElementFactory.GetInstance(header);
+                    var replacementMap = new Dictionary<IXmlAttribute, IXmlAttribute>();
+
+                    // I'm using LowLevelModificationUtil to physically modify AST at low-level,
+                    // without cloning, invoking reference binds and formatting
+                    // (like ModificationUtil.*/.RemoveAttribute()/.AddAttributeBefore() methods do).
+
+                    var attributes = header.Attributes;
+                    for (var index = 0; index < attributes.Count; index++)
+                    {
+                        var attribute = attributes[index];
+                        var sortedAttribute = sortedAttributes[index];
+                        if (attribute == sortedAttribute) continue;
+
+                        // replace attribute to be reordered with fake attribute
+                        var fakeAttribute = xamlFactory.CreateRootAttribute("fake");
+                        LowLevelModificationUtil.ReplaceChildRange(attribute, attribute, fakeAttribute);
+                        replacementMap.Add(fakeAttribute, sortedAttribute);
+                    }
+
+                    // now all attributes in 'replacementMap' are detached from AST and replaces with fake ones
+                    // let's now replace fakes with attributes in order:
+
+                    foreach (var attribute in replacementMap)
+                    {
+                        var fakeAttribute = attribute.Key;
+                        LowLevelModificationUtil.ReplaceChildRange(fakeAttribute, fakeAttribute, attribute.Value);
+                    }
+                }
+            }
+
+            public void ProcessAfterInterior(ITreeNode element) { }
+            public bool ProcessingIsFinished { get { return false; } }
         }
 
-        private IEnumerable<IXmlAttribute> SortedByPriority(IEnumerable<IXmlAttribute> attributes,
-            string[] attributeNames)
+        private class AttributesComparer : IComparer<IXmlAttribute>
         {
-            return attributes.SelectMany(a =>
+            private readonly Dictionary<string, int> _nameWeights;
+
+            public AttributesComparer(XamlAttributeOrderingSettings settings)
             {
-                int index = Array.IndexOf(attributeNames, a.AttributeName);
-                if (index < 0) return Enumerable.Empty<Tuple<IXmlAttribute, int>>();
-                return new[] {Tuple.Create(a, index)};
-            })
-                .OrderBy(a => a.Item2)
-                .Select(a => a.Item1);
+                var attributeGroups = new[]
+                {
+                    settings.Group1_KeyGroup,
+                    settings.Group2_NameGroup,
+                    settings.Group3_AttachedLayoutGroup,
+                    settings.Group4_LayoutGroup,
+                    settings.Group5_AlignmentGroup,
+                    settings.Group6_MiscGroup
+                };
+
+                var weight = 0;
+                var nameWeights = new Dictionary<string, int>(StringComparer.Ordinal);
+
+                // flatten all the names and assign them corresponding weights
+                foreach (var name in attributeGroups
+                    .SelectMany(group => @group.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
+                    .Select(s => s.Trim())
+                    .Where(s => !string.IsNullOrWhiteSpace(s)))
+                {
+                    // todo: prevent from/warn about duplicate names in settings
+                    if (!nameWeights.ContainsKey(name))
+                    {
+                        nameWeights.Add(name, weight++);
+                    }
+                }
+
+                _nameWeights = nameWeights;
+            }
+
+            private int WeightAttribute(IXmlAttribute attribute)
+            {
+                if (attribute is IXClassAttribute) return -2;
+                if (attribute is INamespaceAlias) return -1;
+
+                int value;
+                if (_nameWeights.TryGetValue(attribute.AttributeName, out value))
+                    return value;
+
+                return int.MaxValue;
+            }
+
+            public int Compare(IXmlAttribute x, IXmlAttribute y)
+            {
+                var xWeight = WeightAttribute(x);
+                var yWeight = WeightAttribute(y);
+
+                // todo: you can add alphabetical sort here for weights == int.MaxValue
+
+                return xWeight.CompareTo(yWeight);
+            }
         }
 
         [DefaultValue(true)]
-        [DisplayName("Reorder Xaml Attributes")]
+        [DisplayName("Reorder XAML Attributes")]
         [Category(XamlCategory)]
         private class Descriptor : CodeCleanupBoolOptionDescriptor
         {
-            public Descriptor()
-                : base("ReorderXamlAttributes")
-            {
-            }
+            public Descriptor() : base("ReorderXamlAttributes") { }
         }
     }
 }
