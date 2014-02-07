@@ -9,6 +9,9 @@ namespace XamlAttributeOrdering
         [SettingsEntry(true, "Enable Ordering of Xaml Attributes")]
         public bool Enable { get; set; }
 
+        [SettingsEntry(true, "Order alphabetically instead of using groups")]
+        public bool IsAlphabeticalOrder { get; set; }
+
         // ReSharper disable InconsistentNaming
         [SettingsEntry("Key, x:Key", "Group #1 - Keys")]
         public string Group1_KeyGroup { get; set; }
