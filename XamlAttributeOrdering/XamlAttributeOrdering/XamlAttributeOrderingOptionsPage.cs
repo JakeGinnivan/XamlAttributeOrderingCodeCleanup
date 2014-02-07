@@ -50,7 +50,7 @@ namespace XamlAttributeOrdering
 
             var alphabeticOrderBox = new CheckBoxDisabledNoCheck2 { Content = "Order alphabetically instead of using groups" };
             Grid.SetColumnSpan(alphabeticOrderBox, 2);
-            Grid.SetRow(enabledBox, 1);
+            Grid.SetRow(alphabeticOrderBox, 1);
             settings.SetBinding<XamlAttributeOrderingSettings, bool>(lifetime, x => x.IsAlphabeticalOrder, alphabeticOrderBox, CheckBoxDisabledNoCheck2.IsCheckedLogicallyDependencyProperty);
             grid.Children.Add(alphabeticOrderBox);
 
