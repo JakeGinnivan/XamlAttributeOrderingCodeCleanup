@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlAttributeOrdering.8.0", "XamlAttributeOrdering\XamlAttributeOrdering\XamlAttributeOrdering.8.0.csproj", "{FBD179CA-6647-47D7-980D-342AEA5629B2}"
 EndProject
@@ -22,6 +22,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A98A0A
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlAttributeOrdering.8.2", "XamlAttributeOrdering\XamlAttributeOrdering\XamlAttributeOrdering.8.2.csproj", "{E10DF2C3-BA7E-4590-B158-9A7BCC91E825}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlAttributeOrdering.8.2.Tests", "XamlAttributeOrdering\XamlAttributeOrdering.Tests\XamlAttributeOrdering.8.2.Tests.csproj", "{5497F4FD-9AAB-4CC9-B87B-054CF0C3B902}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resharper 8.2", "Resharper 8.2", "{94753791-1AEB-4A1B-9FEB-B5298E300A2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +51,14 @@ Global
 		{6A81B18C-42EF-4938-8BA2-F8A3A4E2DA4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A81B18C-42EF-4938-8BA2-F8A3A4E2DA4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A81B18C-42EF-4938-8BA2-F8A3A4E2DA4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E10DF2C3-BA7E-4590-B158-9A7BCC91E825}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E10DF2C3-BA7E-4590-B158-9A7BCC91E825}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E10DF2C3-BA7E-4590-B158-9A7BCC91E825}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E10DF2C3-BA7E-4590-B158-9A7BCC91E825}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5497F4FD-9AAB-4CC9-B87B-054CF0C3B902}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5497F4FD-9AAB-4CC9-B87B-054CF0C3B902}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5497F4FD-9AAB-4CC9-B87B-054CF0C3B902}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5497F4FD-9AAB-4CC9-B87B-054CF0C3B902}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,5 +68,7 @@ Global
 		{FBD179CA-6647-47D7-980D-342AEA5629B2} = {B6CE0A92-4701-41A9-A74B-B284816954B6}
 		{7A15BCD9-A55E-4899-8BB3-D90E4186FDB2} = {34B5526F-FF66-4F70-9FE1-E2AD220F7C71}
 		{6A81B18C-42EF-4938-8BA2-F8A3A4E2DA4F} = {34B5526F-FF66-4F70-9FE1-E2AD220F7C71}
+		{E10DF2C3-BA7E-4590-B158-9A7BCC91E825} = {94753791-1AEB-4A1B-9FEB-B5298E300A2E}
+		{5497F4FD-9AAB-4CC9-B87B-054CF0C3B902} = {94753791-1AEB-4A1B-9FEB-B5298E300A2E}
 	EndGlobalSection
 EndGlobal
